@@ -8,7 +8,7 @@ import { Header } from '../../components/Header';
 
 import { Container, TextContent, Title, TitleHighlight} from './styles';
 
-export default function Home() {
+const Home = () => {
   return (
     <>
       <Header />
@@ -33,3 +33,5 @@ export default function Home() {
     </>
   )
 }
+
+export { Home };
