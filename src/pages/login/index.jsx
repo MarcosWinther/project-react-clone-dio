@@ -9,6 +9,8 @@ import { Button } from '../../components/Button';
 import { Header } from '../../components/Header';
 import { Input } from '../../components/Input';
 
+import { api } from '../../services/api';
+
 import { Column, Container, CriarText, EsqueciText, Row, SubtitleLogin, Title, TitleLogin, Wrapper } from './styles';
 
 const schema = yup
@@ -22,18 +24,23 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const { control, handleSubmit, watch, formState: { errors, isValid } } = useForm({
+  const { control, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange'
   });
 
-  console.log(isValid, errors);
-
-  const onSubmit = (data) => console.log(data);
-
-  const handleClickSignIn = () => {
-    navigate('/feed');
-  }
+  const onSubmit = async formData => {
+    try {
+      const { data } = await api.get(`users?email=${formData.email}&senha=${formData.password}`);
+      if(data.length === 1) {
+        navigate('/feed');
+      } else {
+        alert('E-mail ou senha inválido!')
+      }
+    } catch {
+      alert('Houve um erro, tente novamente mais tarde.')
+    }
+  };
 
   return (
     <>
@@ -52,7 +59,7 @@ const Login = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <Input name="email" errorMessage={errors?.email?.message} control={control} placeholder="E-mail" leftIcon={<MdEmail /> } />
               <Input name="password" errorMessage={errors?.password?.message} control={control} placeholder="Senha" type="password" leftIcon={<MdLock /> } />
-              <Button title="Entrar" variant='secondary' onClick={handleClickSignIn} type="submit" />
+              <Button title="Entrar" variant='secondary' type="submit" />
             </form>
             <Row>
               <EsqueciText>Esqueci minha senha</EsqueciText>
